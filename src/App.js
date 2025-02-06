@@ -5,6 +5,7 @@ import Home from './Home';
 import Dashboard from './Dashboard';
 import './App.css';
 import { ClerkProvider } from '@clerk/clerk-react';
+import { ChatScreen } from './ChatScreen';
 
 function App() {
   console.log(
@@ -20,6 +21,7 @@ function App() {
             <Route exact path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/chat' element={<ChatScreen />} />
             {/* Add more routes here as needed */}
           </Routes>
         </div>
