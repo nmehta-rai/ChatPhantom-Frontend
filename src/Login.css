@@ -1,0 +1,101 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+.login-page {
+  display: flex;
+  height: 100vh;
+}
+
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-right {
+  flex: 1;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+h1,
+h2 {
+  margin-bottom: 20px;
+}
+
+.step-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin: 5px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 200px;
+}
+
+.step-button.active {
+  background-color: white;
+  color: #6a11cb;
+}
+
+.social-button {
+  background-color: #f0f0f0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 150px;
+}
+
+form {
+  width: 100%;
+  max-width: 400px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.submit-button {
+  background-color: #6a11cb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+p {
+  margin-top: 20px;
+}
+
+.step-list {
+  list-style-type: decimal;
+  padding-left: 20px;
+  color: white;
+}
+
+.step-list li {
+  margin: 10px 0;
+  font-size: 18px;
+}

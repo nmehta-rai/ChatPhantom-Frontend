@@ -1,0 +1,134 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+}
+
+.logout-button {
+  background-color: #ff4b5c;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #ff1e3c;
+}
+
+.dashboard-content {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  position: relative;
+  width: 200px;
+  background-color: #222;
+  color: white;
+  padding: 20px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  overflow: hidden;
+}
+
+.sidebar-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+}
+
+.sidebar-icon img {
+  width: 24px;
+  height: 24px;
+  filter: invert(1);
+}
+
+.toggle-sidebar {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #444;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  margin-top: 20px;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.sidebar ul li {
+  text-align: left;
+  padding: 5px 0;
+}
+
+.sidebar.collapsed ul {
+  display: none;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+}
+
+.create-button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.create-button:hover {
+  background-color: #45a049;
+}
