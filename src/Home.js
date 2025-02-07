@@ -6,7 +6,7 @@ function Home() {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/chat');
+    navigate('/login');
   };
 
   return (

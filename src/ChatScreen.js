@@ -1,7 +1,8 @@
 // ChatComponent.jsx
 import React, { useState } from 'react';
+import './ChatScreen.css';
 
-export const ChatScreen = () => {
+export const ChatScreen = ({ phantomName }) => {
   const [input, setInput] = useState('');
   const [conversation, setConversation] = useState([]); // Array of { role, content }
   const [streamingResponse, setStreamingResponse] = useState('');
@@ -69,38 +70,71 @@ export const ChatScreen = () => {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
-    <div style={{ maxWidth: 600, margin: 'auto' }}>
-      <h1>Pydantic AI Agentic RAG Chat</h1>
-      <div style={{ border: '1px solid #ccc', padding: 10, minHeight: 300 }}>
+    <div className='chat-screen'>
+      <div className='chat-title'>{`${phantomName} Phantom`}</div>
+      <div className='messages-container'>
         {conversation.map((msg, idx) => (
-          <div key={idx} style={{ marginBottom: 10 }}>
-            <strong>{msg.role === 'user' ? 'You' : 'Assistant'}:</strong>{' '}
-            <span>{msg.content}</span>
+          <div
+            key={idx}
+            className={`message ${msg.role === 'user' ? 'user' : 'assistant'}`}
+          >
+            <div className='message-content'>
+              <p>{msg.content}</p>
+            </div>
           </div>
         ))}
-        {/* Display streaming update */}
         {streamingResponse && (
-          <div style={{ marginBottom: 10 }}>
-            <strong>Assistant:</strong>{' '}
-            <span style={{ fontStyle: 'italic' }}>{streamingResponse}</span>
+          <div className='message assistant'>
+            <div className='message-content'>
+              <p>{streamingResponse}</p>
+            </div>
           </div>
         )}
       </div>
-      <div style={{ marginTop: 20 }}>
-        <input
-          type='text'
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder='Ask your question...'
-          style={{ width: '80%', padding: '8px' }}
-        />
-        <button
-          onClick={sendMessage}
-          style={{ padding: '8px 12px', marginLeft: 5 }}
-        >
-          Send
-        </button>
+      <div className='input-container'>
+        <div className='input-box'>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder='Message ChatPhantom...'
+            rows={1}
+          />
+          <button
+            onClick={sendMessage}
+            className='send-button'
+            disabled={!input.trim()}
+          >
+            <svg
+              stroke='currentColor'
+              fill='none'
+              strokeWidth='2'
+              viewBox='0 0 24 24'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              height='1em'
+              width='1em'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <line x1='22' y1='2' x2='11' y2='13'></line>
+              <polygon points='22 2 15 22 11 13 2 9 22 2'></polygon>
+            </svg>
+          </button>
+        </div>
+        <div className='input-footer'>
+          <span className='footer-text'>
+            ChatPhantom can make mistakes. Consider checking important
+            information.
+          </span>
+        </div>
       </div>
     </div>
   );

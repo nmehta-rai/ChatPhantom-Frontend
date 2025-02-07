@@ -1,0 +1,66 @@
+/* Theme definitions */
+.theme-light {
+  --color-primary: #6e6e80; /* Neutral gray for secondary text */
+  --color-secondary: #ffffff; /* White for backgrounds */
+  --color-accent: #10a37f; /* Original green accent */
+  --color-background: #f4f4f9; /* Light gray background */
+  --color-foreground: #353740; /* Dark gray for text */
+  --color-highlight: #16b892; /* Lighter green for hover states */
+  --color-error: #dc3545; /* Bootstrap-style red */
+  --color-success: #28a745; /* Bootstrap-style green */
+  --color-warning: #ffc107; /* Bootstrap-style amber */
+
+  /* Additional theme variables */
+  --border-color: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.05);
+  --hover-overlay: rgba(0, 0, 0, 0.05);
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark {
+  --color-primary: #8e8e90; /* Phantom Gray */
+  --color-secondary: #27272a; /* Midnight Black */
+  --color-accent: #6e57e0; /* Ghostly Violet */
+  --color-background: #1a1a1d; /* Shadow Black */
+  --color-foreground: #e0e0e3; /* Fog White */
+  --color-highlight: #9a8cf5; /* Ethereal Lavender */
+  --color-error: #d72638; /* Blood Moon Red */
+  --color-success: #4ade80; /* Ectoplasmic Green */
+  --color-warning: #f59e0b; /* Haunted Amber */
+
+  /* Additional theme variables */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --hover-overlay: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+}
+
+/* Default to dark theme */
+:root {
+  --color-primary: #8e8e90;
+  --color-secondary: #27272a;
+  --color-accent: #6e57e0;
+  --color-background: #1a1a1d;
+  --color-foreground: #e0e0e3;
+  --color-highlight: #9a8cf5;
+  --color-error: #d72638;
+  --color-success: #4ade80;
+  --color-warning: #f59e0b;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --hover-overlay: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+}
+
+/* Usage instructions:
+ * 1. Import this file in your root component or CSS
+ * 2. To switch themes, add either 'theme-light' or 'theme-dark' class to the root element
+ * 3. All child components will inherit the theme through CSS variables
+ *
+ * Example:
+ * document.documentElement.className = 'theme-light'; // For light theme
+ * document.documentElement.className = 'theme-dark';  // For dark theme
+ */
