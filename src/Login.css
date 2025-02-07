@@ -1,3 +1,5 @@
+@import './themes.css';
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -7,32 +9,40 @@ body {
 .login-page {
   display: flex;
   height: 100vh;
+  background-color: var(--color-background);
 }
 
 .login-left {
   flex: 1;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: white;
+  background-color: var(--color-secondary);
+  color: var(--color-foreground);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
+  padding: 4rem;
+  position: relative;
 }
 
-.login-right {
-  flex: 1;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
+.login-left h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 1s ease-out;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent),
+    var(--color-highlight)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-h1,
-h2 {
-  margin-bottom: 20px;
+.login-left p {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  opacity: 0.9;
+  animation: fadeIn 1s ease-out 0.2s backwards;
+  color: var(--color-primary);
 }
 
 .step-button {
@@ -90,12 +100,159 @@ p {
 }
 
 .step-list {
-  list-style-type: decimal;
-  padding-left: 20px;
-  color: white;
+  list-style: none;
+  padding: 0;
+  counter-reset: step-counter;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transform: translateX(20px);
 }
 
 .step-list li {
-  margin: 10px 0;
-  font-size: 18px;
+  font-size: 1.1rem;
+  margin: 0.8rem 0;
+  position: relative;
+  animation: fadeIn 1s ease-out;
+  animation-fill-mode: backwards;
+  color: var(--color-foreground);
+  display: flex;
+  align-items: center;
+  padding-left: 40px;
+  width: 100%;
+}
+
+.step-list li::before {
+  content: counter(step-counter);
+  counter-increment: step-counter;
+  position: absolute;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent),
+    var(--color-highlight)
+  );
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+}
+
+.login-right {
+  flex: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(154, 140, 245, 0.3),
+    rgba(110, 87, 224, 0.2)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 70% 30%,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* Clerk Component Overrides */
+.login-right :global(.cl-card) {
+  background-color: var(--color-secondary) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.login-right :global(.cl-headerTitle),
+.login-right :global(.cl-headerSubtitle) {
+  color: var(--color-foreground) !important;
+}
+
+.login-right :global(.cl-button) {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent),
+    var(--color-highlight)
+  ) !important;
+  border: none !important;
+  color: white !important;
+  padding: 1rem 2rem !important;
+  font-weight: 600 !important;
+  border-radius: 50px !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.login-right :global(.cl-button:hover) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.login-right :global(.cl-socialButtonsBlockButton) {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--color-foreground) !important;
+}
+
+.login-right :global(.cl-socialButtonsBlockButton:hover) {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+.login-right :global(.cl-footerActionLink) {
+  color: var(--color-accent) !important;
+}
+
+.login-right :global(.cl-footerActionText) {
+  color: var(--color-foreground) !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-left {
+    padding: 2rem;
+  }
+
+  .login-left h1 {
+    font-size: 2rem;
+  }
+
+  .step-list li {
+    font-size: 1rem;
+  }
 }

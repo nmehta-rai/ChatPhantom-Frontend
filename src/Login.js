@@ -14,7 +14,20 @@ function Login() {
         </ol>
       </div>
       <div className='login-right'>
-        <SignIn redirectUrl='/dashboard' />
+        <SignIn
+          appearance={{
+            elements: {
+              formButtonPrimary: 'cl-button',
+              card: 'cl-card',
+              headerTitle: 'cl-headerTitle',
+              headerSubtitle: 'cl-headerSubtitle',
+              socialButtonsBlockButton: 'cl-socialButtonsBlockButton',
+              footerActionLink: 'cl-footerActionLink',
+              footerActionText: 'cl-footerActionText',
+            },
+          }}
+          redirectUrl='/dashboard'
+        />
       </div>
     </div>
   );
