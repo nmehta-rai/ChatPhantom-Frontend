@@ -292,9 +292,29 @@ body {
   color: var(--color-primary);
 }
 
+.empty-phantoms-message {
+  padding: 20px 20px 0 20px;
+  text-align: center;
+  color: var(--color-primary);
+}
+
+.empty-phantoms-message p {
+  margin: 0 0 12px 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.empty-phantoms-message .create-hint {
+  color: var(--color-primary);
+  opacity: 0.8;
+  font-size: 0.85rem;
+  padding: 0 12px;
+}
+
 .create-phantom-section {
   padding: 16px;
   text-align: center;
+  margin-top: 8px;
 }
 
 .create-button {
@@ -419,3 +439,5 @@ body {
   width: 20px;
   height: 20px;
 }
+
+/* Keep all other existing styles */

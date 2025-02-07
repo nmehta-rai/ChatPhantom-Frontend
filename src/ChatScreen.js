@@ -1,14 +1,22 @@
 // ChatComponent.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ChatScreen.css';
+import logo from './assets/ChapPhantom Logo No Background.png';
 
-export const ChatScreen = ({ phantomName }) => {
+export const ChatScreen = ({ phantom }) => {
   const [input, setInput] = useState('');
   const [conversation, setConversation] = useState([]); // Array of { role, content }
   const [streamingResponse, setStreamingResponse] = useState('');
 
+  // Log phantom ID when component loads or phantom changes
+  useEffect(() => {
+    console.log('ChatScreen loaded with phantom ID:', phantom.phantom_id);
+  }, [phantom]);
+
   const sendMessage = async () => {
     if (!input.trim()) return;
+
+    console.log('Sending message for phantom ID:', phantom.phantom_id);
 
     // Add user message to conversation history
     const newUserMessage = { role: 'user', content: input };
@@ -26,6 +34,7 @@ export const ChatScreen = ({ phantomName }) => {
       body: JSON.stringify({
         user_input: input,
         messages: updatedConversation,
+        source: phantom.phantom_id,
       }),
     });
 
@@ -79,7 +88,12 @@ export const ChatScreen = ({ phantomName }) => {
 
   return (
     <div className='chat-screen'>
-      <div className='chat-title'>{`${phantomName} Phantom`}</div>
+      <div className='chat-title'>
+        <img src={logo} alt='ChatPhantom Logo' className='chat-logo' />
+        <span>
+          <strong>{phantom.phantom_name}</strong> Phantom
+        </span>
+      </div>
       <div className='messages-container'>
         {conversation.map((msg, idx) => (
           <div

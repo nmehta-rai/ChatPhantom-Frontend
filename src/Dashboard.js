@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import axios from 'axios';
 import './Dashboard.css';
@@ -6,24 +6,61 @@ import SidebarIcon from './assets/sidebar.svg';
 import ChatPhantomLogo from './assets/ChapPhantom Logo No Background.png';
 import AddPhantomIcon from './assets/AddPhantomIcon.png';
 import { ChatScreen } from './ChatScreen';
+import CreatePhantomForm from './components/CreatePhantomForm';
+import PreparingPhantomScreen from './components/PreparingPhantomScreen';
 
 function Dashboard() {
   const API_BASE_URL = 'http://127.0.0.1:8000';
+  const WS_BASE_URL = 'ws://127.0.0.1:8000';
 
   const { user } = useUser();
   const { signOut } = useClerk();
   const [phantoms, setPhantoms] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedPhantom, setSelectedPhantom] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [phantomStatuses, setPhantomStatuses] = useState({});
+  const websocketRefs = useRef({});
 
   useEffect(() => {
     if (user) {
       console.log('User:', user.id);
       getPhantoms();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      // Cleanup WebSocket connections
+      Object.values(websocketRefs.current).forEach((ws) => ws.close());
+    };
   }, [user]);
+
+  const connectWebSocket = (phantomId) => {
+    // Close existing connection if any
+    if (websocketRefs.current[phantomId]) {
+      websocketRefs.current[phantomId].close();
+    }
+
+    const ws = new WebSocket(`${WS_BASE_URL}/ws/phantom/${phantomId}`);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setPhantomStatuses((prev) => ({
+        ...prev,
+        [phantomId]: data.status,
+      }));
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+      delete websocketRefs.current[phantomId];
+    };
+
+    websocketRefs.current[phantomId] = ws;
+  };
 
   const getPhantoms = async () => {
     try {
@@ -32,6 +69,12 @@ function Dashboard() {
       });
       console.log('Phantoms List:', response.data);
       setPhantoms(response.data);
+
+      // Connect WebSocket for each phantom
+      response.data.forEach((phantom) => {
+        connectWebSocket(phantom.phantom_id);
+      });
+
       if (response.data.length > 0 && !selectedPhantom) {
         setSelectedPhantom(response.data[0]);
       }
@@ -52,12 +95,63 @@ function Dashboard() {
   };
 
   const handleCreatePhantom = () => {
-    // TODO: Implement phantom creation
-    console.log('Create new phantom');
+    setShowCreateForm(true);
+    setSelectedPhantom(null);
   };
 
   const handleSignOut = () => {
     signOut();
+  };
+
+  const handleSubmitPhantom = async (formData) => {
+    try {
+      console.log('Submitting phantom:', formData);
+      const response = await axios.post(`${API_BASE_URL}/phantoms`, {
+        phantom_name: formData.phantomName,
+        website_url: formData.websiteUrl,
+        owner_id: user.id,
+      });
+
+      console.log('Create phantom response:', response.data);
+
+      if (response.data.status === 'success') {
+        const newPhantom = response.data.data;
+        console.log('New phantom created:', newPhantom);
+
+        if (newPhantom.phantom_id) {
+          // Connect WebSocket for the new phantom
+          connectWebSocket(newPhantom.phantom_id);
+          console.log('WebSocket connected for:', newPhantom.phantom_id);
+
+          // Update phantoms list
+          setPhantoms((prev) => [...prev, newPhantom]);
+
+          // Set initial status for the new phantom (assuming it starts with crawling)
+          setPhantomStatuses((prev) => ({
+            ...prev,
+            [newPhantom.phantom_id]: 'crawling',
+          }));
+
+          // Close the create form and select the new phantom
+          setShowCreateForm(false);
+          setSelectedPhantom(newPhantom);
+          console.log('States updated, navigation should occur');
+        } else {
+          console.error('Created phantom is missing phantom_id:', newPhantom);
+        }
+      } else {
+        console.error('Failed to create phantom:', response.data);
+      }
+    } catch (error) {
+      console.error(
+        'Error creating phantom:',
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleCancelCreate = () => {
+    setShowCreateForm(false);
   };
 
   return (
@@ -154,16 +248,50 @@ function Dashboard() {
               </ul>
             </div>
             {phantoms.length === 0 && (
-              <div className='create-phantom-section'>
-                <button className='create-button'>Create a Phantom</button>
-              </div>
+              <>
+                <div className='empty-phantoms-message'>
+                  <p>No phantoms lurking around yet!</p>
+                  <p className='create-hint'>
+                    Create your first phantom and find them all here when you
+                    want to chat again.
+                  </p>
+                </div>
+                <div className='create-phantom-section'>
+                  <button
+                    className='create-button'
+                    onClick={handleCreatePhantom}
+                  >
+                    Create a Phantom
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>
         <div className={`main-content ${!sidebarOpen ? 'sidebar-closed' : ''}`}>
           <div className='chat-container'>
-            {selectedPhantom ? (
-              <ChatScreen phantomName={selectedPhantom.phantom_name} />
+            {showCreateForm ? (
+              <CreatePhantomForm
+                onSubmit={handleSubmitPhantom}
+                onCancel={handleCancelCreate}
+              />
+            ) : selectedPhantom ? (
+              (() => {
+                console.log(
+                  'Rendering phantom:',
+                  selectedPhantom.phantom_id,
+                  'Status:',
+                  phantomStatuses[selectedPhantom.phantom_id]
+                );
+                return phantomStatuses[selectedPhantom.phantom_id] ===
+                  'completed' ? (
+                  <ChatScreen phantom={selectedPhantom} />
+                ) : (
+                  <PreparingPhantomScreen
+                    phantomName={selectedPhantom.phantom_name}
+                  />
+                );
+              })()
             ) : (
               <div className='welcome-screen'>
                 <img
