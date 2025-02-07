@@ -11,9 +11,12 @@ function Home() {
 
   return (
     <div className='home-container'>
-      <div className='home-content'>
+      <div className='hero-section'>
+        <div className='logo-container'>
+          <div className='logo-animation'></div>
+        </div>
         <h1>ChatPhantom</h1>
-        <p>Data Refined, Deeper Insights Defined</p>
+        <p className='tagline'>Data Refined, Deeper Insights Defined</p>
         <button className='cta-button' onClick={handleGetStarted}>
           Get Started
         </button>
