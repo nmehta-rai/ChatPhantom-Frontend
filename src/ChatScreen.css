@@ -36,6 +36,23 @@
   gap: 12px;
   flex-shrink: 0;
   flex: 0.05;
+  position: relative;
+}
+
+.chat-title::after {
+  content: '';
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border-color),
+    var(--border-color),
+    transparent
+  );
+  bottom: 0;
 }
 
 .chat-logo {
@@ -185,7 +202,7 @@
 .scroll-to-bottom {
   position: fixed;
   bottom: 160px; /* Increased from 120px to 160px to move it higher */
-  right: 30px;
+  right: 50px;
   background-color: var(--color-accent);
   color: white;
   width: 40px;
@@ -228,7 +245,7 @@
   left: 260px;
   right: 0;
   background-color: var(--color-secondary);
-  padding: 20px;
+  padding: 22px 20px;
   border-top: 1px solid var(--border-color);
   transition: left 0.2s ease;
   z-index: 1000;
