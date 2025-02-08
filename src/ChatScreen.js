@@ -6,50 +6,7 @@ import logo from './assets/ChapPhantom Logo No Background.png';
 
 export const ChatScreen = ({ phantom }) => {
   const [input, setInput] = useState('');
-  const [conversation, setConversation] = useState([
-    { role: 'user', content: 'Hello!' },
-    { role: 'model', content: 'Hi there! How can I help you today?' },
-    { role: 'user', content: 'Tell me about your website.' },
-    {
-      role: 'model',
-      content:
-        "I'd be happy to help! Our website has many interesting features...",
-    },
-    { role: 'user', content: 'Can you show me some examples?' },
-    {
-      role: 'model',
-      content:
-        'Here are some examples:\n\n1. Feature one\n2. Feature two\n3. Feature three',
-    },
-    { role: 'user', content: "That's interesting!" },
-    {
-      role: 'model',
-      content: "I'm glad you find it interesting! Here's more information...",
-    },
-    { role: 'user', content: 'Tell me more.' },
-    {
-      role: 'model',
-      content: 'Let me explain in detail...\n\n- Point 1\n- Point 2\n- Point 3',
-    },
-    { role: 'user', content: 'What about pricing?' },
-    {
-      role: 'model',
-      content:
-        "Our pricing is very competitive. Here's a breakdown:\n\n1. Basic Plan\n2. Pro Plan\n3. Enterprise Plan",
-    },
-    { role: 'user', content: 'Any discounts available?' },
-    {
-      role: 'model',
-      content:
-        'Yes! We offer several discounts:\n\n- Early bird\n- Annual subscription\n- Team packages',
-    },
-    { role: 'user', content: 'How do I get started?' },
-    {
-      role: 'model',
-      content:
-        'Getting started is easy! Just follow these steps:\n\n1. Sign up\n2. Choose a plan\n3. Start using the features',
-    },
-  ]); // Array of { role, content }
+  const [conversation, setConversation] = useState([]); // Array of { role, content }
   const [streamingResponse, setStreamingResponse] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [userHasScrolled, setUserHasScrolled] = useState(false);

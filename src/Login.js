@@ -6,11 +6,11 @@ function Login() {
     <div className='login-page'>
       <div className='login-left'>
         <h1>Get Started with Us</h1>
-        <p>Complete these easy steps to register your account.</p>
+        <p>Complete these easy steps to get started.</p>
         <ol className='step-list'>
-          <li>Sign up your account</li>
-          <li>Set up your workspace</li>
-          <li>Set up your profile</li>
+          <li>Create an account</li>
+          <li>Summon your phantom</li>
+          <li>Bring your website to life!</li>
         </ol>
       </div>
       <div className='login-right'>

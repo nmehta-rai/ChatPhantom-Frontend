@@ -222,7 +222,7 @@ function Dashboard() {
               alt='ChatPhantom Logo'
               className='loading-logo'
             />
-            <div className='loading-text'>Connecting to your phantom...</div>
+            <div className='loading-text'>Summoning your phantoms...</div>
           </div>
         );
       }
