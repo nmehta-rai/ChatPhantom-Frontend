@@ -227,10 +227,16 @@ function Dashboard() {
         );
       }
 
-      return phantomStatuses[selectedPhantom.phantom_id] === 'completed' ? (
-        <ChatScreen phantom={selectedPhantom} />
-      ) : (
-        <PreparingPhantomScreen phantomName={selectedPhantom.phantom_name} />
+      return (
+        <>
+          {phantomStatuses[selectedPhantom.phantom_id] === 'completed' ? (
+            <ChatScreen phantom={selectedPhantom} />
+          ) : (
+            <PreparingPhantomScreen
+              phantomName={selectedPhantom.phantom_name}
+            />
+          )}
+        </>
       );
     }
 
