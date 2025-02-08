@@ -76,13 +76,20 @@
 }
 
 .message.user {
+  position: relative;
+  margin-top: 32px;
   background: linear-gradient(
     to right,
     transparent,
-    var(--color-secondary),
+    rgba(110, 87, 224, 0.08) 20%,
+    rgba(154, 140, 245, 0.1) 50%,
+    rgba(110, 87, 224, 0.08) 80%,
     transparent
   );
-  margin-top: 32px;
+}
+
+.message.user .message-content p {
+  color: var(--color-highlight);
 }
 
 .message.assistant {
@@ -112,7 +119,8 @@
   width: 100%;
 }
 
-.message-content p {
+/* Markdown content styles */
+.message-content > div {
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
@@ -120,8 +128,39 @@
   color: var(--color-foreground);
 }
 
-.message.assistant .message-content p {
+.message.assistant .message-content > div {
   opacity: 0.9;
+}
+
+/* Link styles */
+.message.assistant .message-content a {
+  color: var(--color-accent);
+  text-decoration: none;
+  position: relative;
+  transition: all 0.2s ease;
+  padding: 0.1em 0.2em;
+  margin: 0 0.1em;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+}
+
+.message.assistant .message-content a:hover {
+  color: var(--color-highlight);
+  background-color: rgba(110, 87, 224, 0.1);
+}
+
+.message.assistant .message-content a::after {
+  content: '↗';
+  font-size: 0.8em;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+.message.assistant .message-content a:hover::after {
+  opacity: 1;
+  transform: translate(2px, -2px);
 }
 
 .input-container {

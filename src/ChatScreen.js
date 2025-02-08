@@ -1,5 +1,6 @@
 // ChatComponent.jsx
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import './ChatScreen.css';
 import logo from './assets/ChapPhantom Logo No Background.png';
 
@@ -101,14 +102,14 @@ export const ChatScreen = ({ phantom }) => {
             className={`message ${msg.role === 'user' ? 'user' : 'assistant'}`}
           >
             <div className='message-content'>
-              <p>{msg.content}</p>
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           </div>
         ))}
         {streamingResponse && (
           <div className='message assistant'>
             <div className='message-content'>
-              <p>{streamingResponse}</p>
+              <ReactMarkdown>{streamingResponse}</ReactMarkdown>
             </div>
           </div>
         )}

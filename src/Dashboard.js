@@ -23,6 +23,8 @@ function Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [phantomStatuses, setPhantomStatuses] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialStatusReceived, setIsInitialStatusReceived] = useState(false);
   const websocketRefs = useRef({});
 
   useEffect(() => {
@@ -50,10 +52,12 @@ function Dashboard() {
         ...prev,
         [phantomId]: data.status,
       }));
+      setIsInitialStatusReceived(true);
     };
 
     ws.onerror = (error) => {
       console.error('WebSocket error:', error);
+      setIsInitialStatusReceived(true); // Ensure we don't get stuck loading on error
     };
 
     ws.onclose = () => {
@@ -65,6 +69,8 @@ function Dashboard() {
   };
 
   const getPhantoms = async () => {
+    setIsLoading(true);
+    setIsInitialStatusReceived(false);
     try {
       const response = await axios.get(`${API_BASE_URL}/phantoms`, {
         params: { user_id: user.id },
@@ -85,6 +91,9 @@ function Dashboard() {
         'Error fetching phantoms:',
         error.response?.data || error.message
       );
+      setIsInitialStatusReceived(true); // Ensure we don't get stuck loading on error
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -178,6 +187,77 @@ function Dashboard() {
 
   const handleCancelCreate = () => {
     setShowCreateForm(false);
+  };
+
+  const renderMainContent = () => {
+    if (isLoading) {
+      return (
+        <div className='loading-screen'>
+          <img
+            src={ChatPhantomLogo}
+            alt='ChatPhantom Logo'
+            className='loading-logo'
+          />
+          <div className='loading-text'>Summoning your phantoms...</div>
+        </div>
+      );
+    }
+
+    if (showCreateForm) {
+      return (
+        <CreatePhantomForm
+          onSubmit={handleSubmitPhantom}
+          onCancel={handleCancelCreate}
+        />
+      );
+    }
+
+    if (selectedPhantom) {
+      // Show loading screen while waiting for initial status
+      if (!isInitialStatusReceived) {
+        return (
+          <div className='loading-screen'>
+            <img
+              src={ChatPhantomLogo}
+              alt='ChatPhantom Logo'
+              className='loading-logo'
+            />
+            <div className='loading-text'>Connecting to your phantom...</div>
+          </div>
+        );
+      }
+
+      return phantomStatuses[selectedPhantom.phantom_id] === 'completed' ? (
+        <ChatScreen phantom={selectedPhantom} />
+      ) : (
+        <PreparingPhantomScreen phantomName={selectedPhantom.phantom_name} />
+      );
+    }
+
+    return (
+      <div className='welcome-screen'>
+        <img
+          src={ChatPhantomLogo}
+          alt='ChatPhantom Logo'
+          className='welcome-logo'
+        />
+        <h1>Welcome to ChatPhantom!</h1>
+        <p>Select or create a phantom from the sidebar to start chatting</p>
+        <button onClick={handleCreatePhantom} className='welcome-create-button'>
+          <svg
+            viewBox='0 0 24 24'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <path
+              d='M12 4C12.5523 4 13 4.44772 13 5V11H19C19.5523 11 20 11.4477 20 12C20 12.5523 19.5523 13 19 13H13V19C13 19.5523 12.5523 20 12 20C11.4477 20 11 19.5523 11 19V13H5C4.44772 13 4 12.5523 4 12C4 11.4477 4.44772 11 5 11H11V5C11 4.44772 11.4477 4 12 4Z'
+              fill='currentColor'
+            />
+          </svg>
+          Create a Phantom
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -303,59 +383,7 @@ function Dashboard() {
           </div>
         </div>
         <div className={`main-content ${!sidebarOpen ? 'sidebar-closed' : ''}`}>
-          <div className='chat-container'>
-            {showCreateForm ? (
-              <CreatePhantomForm
-                onSubmit={handleSubmitPhantom}
-                onCancel={handleCancelCreate}
-              />
-            ) : selectedPhantom ? (
-              (() => {
-                console.log(
-                  'Rendering phantom:',
-                  selectedPhantom.phantom_id,
-                  'Status:',
-                  phantomStatuses[selectedPhantom.phantom_id]
-                );
-                return phantomStatuses[selectedPhantom.phantom_id] ===
-                  'completed' ? (
-                  <ChatScreen phantom={selectedPhantom} />
-                ) : (
-                  <PreparingPhantomScreen
-                    phantomName={selectedPhantom.phantom_name}
-                  />
-                );
-              })()
-            ) : (
-              <div className='welcome-screen'>
-                <img
-                  src={ChatPhantomLogo}
-                  alt='ChatPhantom Logo'
-                  className='welcome-logo'
-                />
-                <h1>Welcome to ChatPhantom!</h1>
-                <p>
-                  Select or create a phantom from the sidebar to start chatting
-                </p>
-                <button
-                  onClick={handleCreatePhantom}
-                  className='welcome-create-button'
-                >
-                  <svg
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      d='M12 4C12.5523 4 13 4.44772 13 5V11H19C19.5523 11 20 11.4477 20 12C20 12.5523 19.5523 13 19 13H13V19C13 19.5523 12.5523 20 12 20C11.4477 20 11 19.5523 11 19V13H5C4.44772 13 4 12.5523 4 12C4 11.4477 4.44772 11 5 11H11V5C11 4.44772 11.4477 4 12 4Z'
-                      fill='currentColor'
-                    />
-                  </svg>
-                  Create a Phantom
-                </button>
-              </div>
-            )}
-          </div>
+          <div className='chat-container'>{renderMainContent()}</div>
         </div>
       </div>
     </div>
