@@ -10,6 +10,8 @@ import AddPhantomIcon from './assets/AddPhantomIcon.png';
 import { ChatScreen } from './ChatScreen';
 import CreatePhantomForm from './components/CreatePhantomForm';
 import PreparingPhantomScreen from './components/PreparingPhantomScreen';
+import EditIcon from './assets/EditIcon.png';
+import EditPhantomForm from './components/EditPhantomForm';
 
 function Dashboard() {
   const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -26,6 +28,8 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialStatusReceived, setIsInitialStatusReceived] = useState(false);
   const websocketRefs = useRef({});
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingPhantom, setEditingPhantom] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -187,6 +191,73 @@ function Dashboard() {
 
   const handleCancelCreate = () => {
     setShowCreateForm(false);
+  };
+
+  const handleEditPhantom = (phantom, e) => {
+    e.stopPropagation(); // Prevent phantom selection when clicking edit
+    setEditingPhantom(phantom);
+    setShowEditForm(true);
+  };
+
+  const handleSavePhantom = async (updatedPhantom) => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/phantoms/${updatedPhantom.phantom_id}`,
+        {
+          phantom_name: updatedPhantom.phantom_name,
+        }
+      );
+
+      if (response.data.status === 'success') {
+        setPhantoms(
+          phantoms.map((p) =>
+            p.phantom_id === updatedPhantom.phantom_id
+              ? { ...p, phantom_name: updatedPhantom.phantom_name }
+              : p
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error updating phantom:', error);
+      throw error;
+    }
+  };
+
+  const handleDeletePhantom = async (phantom) => {
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/phantoms/${phantom.phantom_id}`
+      );
+      if (response.data.status === 'success') {
+        setPhantoms(
+          phantoms.filter((p) => p.phantom_id !== phantom.phantom_id)
+        );
+        if (selectedPhantom?.phantom_id === phantom.phantom_id) {
+          setSelectedPhantom(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting phantom:', error);
+      throw error;
+    }
+  };
+
+  const handleReCrawl = async (phantom) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/phantoms/${phantom.phantom_id}/recrawl`
+      );
+      if (response.data.status === 'success') {
+        // Update phantom status to crawling
+        setPhantomStatuses((prev) => ({
+          ...prev,
+          [phantom.phantom_id]: 'crawling',
+        }));
+      }
+    } catch (error) {
+      console.error('Error initiating recrawl:', error);
+      throw error;
+    }
   };
 
   const renderMainContent = () => {
@@ -362,7 +433,16 @@ function Dashboard() {
                     }`}
                     onClick={() => handlePhantomSelect(phantom)}
                   >
-                    {phantom.phantom_name}
+                    <span className='empty-space' />
+                    <span className='phantom-name'>{phantom.phantom_name}</span>
+                    <span className='edit-btn-container'>
+                      <button
+                        className='edit-phantom-button'
+                        onClick={(e) => handleEditPhantom(phantom, e)}
+                      >
+                        <img className='edit-icon' src={EditIcon} alt='Edit' />
+                      </button>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -392,6 +472,19 @@ function Dashboard() {
           <div className='chat-container'>{renderMainContent()}</div>
         </div>
       </div>
+
+      {showEditForm && editingPhantom && (
+        <EditPhantomForm
+          phantom={editingPhantom}
+          onClose={() => {
+            setShowEditForm(false);
+            setEditingPhantom(null);
+          }}
+          onSave={handleSavePhantom}
+          onDelete={handleDeletePhantom}
+          onReCrawl={() => handleReCrawl(editingPhantom)}
+        />
+      )}
     </div>
   );
 }
