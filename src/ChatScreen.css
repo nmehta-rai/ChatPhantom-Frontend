@@ -17,7 +17,7 @@
   margin: 0 auto;
   position: sticky;
   top: 0;
-  padding: 30px 0;
+  padding: 25px 0;
   font-size: 1.75rem;
   font-weight: 600;
   color: var(--color-foreground);
@@ -35,6 +35,7 @@
   justify-content: center;
   gap: 12px;
   flex-shrink: 0;
+  flex: 0.05;
 }
 
 .chat-logo {
@@ -52,12 +53,8 @@
   background-color: var(--color-background);
   margin: 0;
   width: 100%;
+  margin-right: 100px;
 }
-
-/* Remove debug border */
-/* .messages-container {
-  border: 1px solid red;
-} */
 
 /* Webkit scrollbar styles for messages */
 .messages-container::-webkit-scrollbar {
@@ -89,7 +86,7 @@
 
 .message {
   display: flex;
-  padding: 32px 20px;
+  padding: 30px 20px;
   position: relative;
   max-width: 800px;
   margin: 0 auto;
@@ -99,7 +96,7 @@
 
 .message.user {
   position: relative;
-  margin-top: 32px;
+  margin-top: 30px;
   background: linear-gradient(
     to right,
     transparent,
@@ -227,7 +224,6 @@
 
 /* Update input container z-index for reference */
 .input-container {
-  position: fixed;
   bottom: 0;
   left: 260px;
   right: 0;
@@ -235,7 +231,8 @@
   padding: 20px;
   border-top: 1px solid var(--border-color);
   transition: left 0.2s ease;
-  z-index: 1000; /* Keep this below the scroll button */
+  z-index: 1000;
+  flex: 0.1;
 }
 
 .sidebar-closed .input-container {
