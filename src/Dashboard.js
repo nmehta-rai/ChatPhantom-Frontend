@@ -121,12 +121,6 @@ function Dashboard() {
         console.log('New phantom created:', newPhantom);
 
         if (newPhantom.phantom_id) {
-          // Show success toast with sitemap status if provided
-          toast.success('A new phantom has materialized! 👻', {
-            position: 'top-right',
-            autoClose: 5000,
-          });
-
           // Connect WebSocket for the new phantom
           connectWebSocket(newPhantom.phantom_id);
           console.log('WebSocket connected for:', newPhantom.phantom_id);
