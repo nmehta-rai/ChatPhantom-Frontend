@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Dashboard.css';
 import SidebarIcon from './assets/sidebar.svg';
 import ChatPhantomLogo from './assets/ChapPhantom Logo No Background.png';
@@ -119,6 +121,12 @@ function Dashboard() {
         console.log('New phantom created:', newPhantom);
 
         if (newPhantom.phantom_id) {
+          // Show success toast with sitemap status if provided
+          toast.success('A new phantom has materialized! 👻', {
+            position: 'top-right',
+            autoClose: 5000,
+          });
+
           // Connect WebSocket for the new phantom
           connectWebSocket(newPhantom.phantom_id);
           console.log('WebSocket connected for:', newPhantom.phantom_id);
@@ -126,7 +134,7 @@ function Dashboard() {
           // Update phantoms list
           setPhantoms((prev) => [...prev, newPhantom]);
 
-          // Set initial status for the new phantom (assuming it starts with crawling)
+          // Set initial status for the new phantom
           setPhantomStatuses((prev) => ({
             ...prev,
             [newPhantom.phantom_id]: 'crawling',
@@ -138,14 +146,38 @@ function Dashboard() {
           console.log('States updated, navigation should occur');
         } else {
           console.error('Created phantom is missing phantom_id:', newPhantom);
+          throw new Error('Our phantom got lost in the void! 👻');
         }
       } else {
         console.error('Failed to create phantom:', response.data);
+        throw new Error(
+          response.data.message || 'Our phantom vanished mysteriously...'
+        );
       }
     } catch (error) {
       console.error(
         'Error creating phantom:',
         error.response?.data || error.message
+      );
+
+      // Handle validation errors (400 status)
+      if (error.response?.status === 400) {
+        if (
+          error.response.data.detail ===
+          'No sitemap found for this website. ChatPhantom requires websites to have a sitemap for optimal functionality.'
+        ) {
+          throw new Error(
+            `👻 Oops! We couldn't find a sitemap for this website!\n\nA sitemap helps our phantoms navigate your website and is also great for your SEO. Think of it as a treasure map that guides our ghostly friends through your digital realm! ✨\n\nAsk your web developer to add one - it's like leaving breadcrumbs for our phantoms to follow. 🗺️\n\nNeed help? Check out https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview`
+          );
+        }
+        // For other validation errors
+        throw new Error(
+          "Oh no! Our phantom couldn't materialize! The website seems to be protected by some mysterious force field. 👻✨"
+        );
+      }
+      // For unexpected errors
+      throw new Error(
+        "Looks like there's a disturbance in the phantom realm! 👻\n\nOur ghostly friends are taking a short break. Try summoning again in a moment! ✨"
       );
     }
   };
@@ -156,6 +188,14 @@ function Dashboard() {
 
   return (
     <div className='dashboard-container'>
+      <ToastContainer
+        position='top-right'
+        autoClose={5000}
+        theme='dark'
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+      />
       <div className='dashboard-layout'>
         {/* Profile Dropdown */}
         <div className='profile-section'>

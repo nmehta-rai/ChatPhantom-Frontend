@@ -3,6 +3,36 @@ import './CreatePhantomForm.css';
 import PhantomIcon from '../assets/PhantomIcon2.png';
 import InternetIcon from '../assets/Internet.png';
 
+const ErrorModal = ({ message, onClose }) => {
+  const isHelpMessage = message?.includes('https://');
+  let content = message;
+  let helpUrl = '';
+
+  if (isHelpMessage) {
+    [content, helpUrl] = message.split('Need help? Check out ');
+  }
+
+  return (
+    <div className='modal-overlay'>
+      <div className='error-modal'>
+        <div className='error-content'>
+          {content}
+          {isHelpMessage && (
+            <div className='help-link'>
+              <a href={helpUrl} target='_blank' rel='noopener noreferrer'>
+                View Sitemap Guide
+              </a>
+            </div>
+          )}
+        </div>
+        <button className='modal-close' onClick={onClose}>
+          Okay, got it
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const CreatePhantomForm = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
     phantomName: '',
@@ -12,6 +42,8 @@ const CreatePhantomForm = ({ onSubmit, onCancel }) => {
     phantomName: '',
     websiteUrl: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Validate URL function
   const isValidUrl = (url) => {
@@ -71,20 +103,35 @@ const CreatePhantomForm = ({ onSubmit, onCancel }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    setIsSubmitting(true);
+    setErrorMessage('');
+
     // Ensure the URL has https:// prefix before submitting
     const websiteUrl = /^https?:\/\//i.test(formData.websiteUrl)
       ? formData.websiteUrl
       : `https://${formData.websiteUrl}`;
 
-    onSubmit({
-      ...formData,
-      websiteUrl,
-    });
+    try {
+      await onSubmit({
+        ...formData,
+        websiteUrl,
+      });
+    } catch (error) {
+      console.log('Error caught in form:', error.message);
+      setErrorMessage(error.message);
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className='create-phantom-form'>
       <h2>Create a New Phantom</h2>
+      {errorMessage && (
+        <ErrorModal
+          message={errorMessage}
+          onClose={() => setErrorMessage('')}
+        />
+      )}
       <form onSubmit={handleSubmit}>
         <div className='form-group'>
           <label htmlFor='phantomName'>
@@ -101,6 +148,7 @@ const CreatePhantomForm = ({ onSubmit, onCancel }) => {
               value={formData.phantomName}
               onChange={handleInputChange}
               placeholder='Enter phantom name'
+              disabled={isSubmitting}
             />
             {formErrors.phantomName && (
               <span className='error-message'>{formErrors.phantomName}</span>
@@ -122,6 +170,7 @@ const CreatePhantomForm = ({ onSubmit, onCancel }) => {
               value={formData.websiteUrl}
               onChange={handleInputChange}
               placeholder='https://example.com'
+              disabled={isSubmitting}
             />
             {formErrors.websiteUrl && (
               <span className='error-message'>{formErrors.websiteUrl}</span>
@@ -129,17 +178,24 @@ const CreatePhantomForm = ({ onSubmit, onCancel }) => {
           </div>
         </div>
         <div className='form-actions'>
-          <button type='button' className='cancel-button' onClick={onCancel}>
+          <button
+            type='button'
+            className='cancel-button'
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Cancel
           </button>
           <button
             type='submit'
             className='submit-button'
             disabled={
-              !formData.phantomName.trim() || !isValidUrl(formData.websiteUrl)
+              isSubmitting ||
+              !formData.phantomName.trim() ||
+              !isValidUrl(formData.websiteUrl)
             }
           >
-            Create Phantom
+            {isSubmitting ? 'Summoning...' : 'Create Phantom'}
           </button>
         </div>
       </form>
