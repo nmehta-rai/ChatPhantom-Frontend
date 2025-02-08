@@ -52,7 +52,9 @@ export const ChatScreen = ({ phantom }) => {
   ]); // Array of { role, content }
   const [streamingResponse, setStreamingResponse] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [userHasScrolled, setUserHasScrolled] = useState(false);
   const messagesContainerRef = useRef(null);
+  const isNearBottomRef = useRef(true);
 
   // Log phantom ID when component loads or phantom changes
   useEffect(() => {
@@ -63,15 +65,20 @@ export const ChatScreen = ({ phantom }) => {
   useEffect(() => {
     const handleScroll = (e) => {
       const { scrollTop, scrollHeight, clientHeight } = e.target;
-      // Show button when scrolled up more than 200px from bottom
       const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
       setShowScrollButton(!isNearBottom);
+
+      // Only set userHasScrolled if we're currently streaming and user scrolls up
+      if (streamingResponse && !isNearBottom) {
+        setUserHasScrolled(true);
+      }
+
+      isNearBottomRef.current = isNearBottom;
     };
 
     const container = messagesContainerRef.current;
     if (container) {
       container.addEventListener('scroll', handleScroll);
-      // Check initial scroll position
       handleScroll({ target: container });
     }
 
@@ -80,11 +87,11 @@ export const ChatScreen = ({ phantom }) => {
         container.removeEventListener('scroll', handleScroll);
       }
     };
-  }, []);
+  }, [streamingResponse]);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (force = false) => {
     const container = messagesContainerRef.current;
-    if (container) {
+    if (container && (force || !userHasScrolled)) {
       container.scrollTo({
         top: container.scrollHeight,
         behavior: 'smooth',
@@ -94,13 +101,23 @@ export const ChatScreen = ({ phantom }) => {
 
   // Scroll to bottom when new messages are added
   useEffect(() => {
-    scrollToBottom();
+    scrollToBottom(true); // Force scroll on new message
   }, [conversation]);
+
+  // Auto-scroll while streaming if user hasn't scrolled up
+  useEffect(() => {
+    if (streamingResponse && !userHasScrolled) {
+      scrollToBottom();
+    }
+  }, [streamingResponse, userHasScrolled]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
     console.log('Sending message for phantom ID:', phantom.phantom_id);
+
+    // Reset userHasScrolled when sending a new message
+    setUserHasScrolled(false);
 
     // Add user message to conversation history
     const newUserMessage = { role: 'user', content: input };
@@ -108,6 +125,9 @@ export const ChatScreen = ({ phantom }) => {
     setConversation(updatedConversation);
     setInput('');
     setStreamingResponse('');
+
+    // Force scroll to bottom when sending new message
+    scrollToBottom(true);
 
     // Initiate a POST to the /chat endpoint
     const response = await fetch('http://127.0.0.1:8000/chat', {
@@ -154,6 +174,8 @@ export const ChatScreen = ({ phantom }) => {
               setConversation((prev) => [...prev, newAssistantMessage]);
               // Clear the streaming response to avoid duplicate display
               setStreamingResponse('');
+              // Reset userHasScrolled when message is complete
+              setUserHasScrolled(false);
             }
           } catch (err) {
             console.error('Error parsing SSE data', err);
