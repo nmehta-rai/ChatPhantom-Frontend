@@ -252,23 +252,33 @@
 }
 
 .cancel-delete-button {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  border: 1px solid var(--border-color) !important;
+  background-color: var(--color-accent);
+  color: white;
+  border: none !important;
 }
 
 .cancel-delete-button:hover:not(:disabled) {
-  background-color: var(--hover-overlay);
+  background-color: var(--color-highlight);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.3);
 }
 
 .confirm-delete-button {
-  background-color: var(--color-error);
-  color: white;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  border: 1px solid var(--border-color) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .confirm-delete-button:hover:not(:disabled) {
-  background-color: var(--color-error-dark, #ff3333);
-  transform: translateY(-1px);
+  background-color: var(--color-error);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.3);
+  border-color: transparent !important;
 }
 
 .confirmation-actions button:disabled {
@@ -408,38 +418,6 @@
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-}
-
-.cancel-delete-button {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  border: 1px solid var(--border-color) !important;
-}
-
-.cancel-delete-button:hover:not(:disabled) {
-  background-color: var(--hover-overlay);
-  transform: translateY(-2px);
-}
-
-.confirm-delete-button {
-  background-color: var(--color-error);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.confirm-delete-button:hover:not(:disabled) {
-  background-color: var(--color-error-dark, #ff3333);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.3);
-}
-
-.confirmation-actions button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
 }
 
 .vanishing-text {
