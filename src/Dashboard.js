@@ -107,6 +107,7 @@ function Dashboard() {
 
   const handlePhantomSelect = (phantom) => {
     setSelectedPhantom(phantom);
+    setShowCreateForm(false);
   };
 
   const handleCreatePhantom = () => {
