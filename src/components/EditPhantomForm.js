@@ -4,6 +4,7 @@ import ChatPhantomLogo from '../assets/ChapPhantom Logo No Background.png';
 import PhantomIcon from '../assets/PhantomIcon2.png';
 import InternetIcon from '../assets/Internet.png';
 import EditIcon from '../assets/EditIcon.png';
+import CryingPhantomIcon from '../assets/CryingPhantomIcon.png';
 
 const EditPhantomForm = ({ phantom, onClose, onSave, onDelete, onReCrawl }) => {
   const [formData, setFormData] = useState({
@@ -55,18 +56,41 @@ const EditPhantomForm = ({ phantom, onClose, onSave, onDelete, onReCrawl }) => {
   };
 
   const renderDeleteConfirmation = () => (
-    <div className='edit-phantom-form'>
-      <h2>Delete {phantom.phantom_name}?</h2>
+    <div className='edit-phantom-form delete-confirmation-view'>
+      <div className='delete-header'>
+        <img
+          src={CryingPhantomIcon}
+          alt='Crying Phantom'
+          className='crying-phantom'
+        />
+        <h2>Delete {phantom.phantom_name}?</h2>
+      </div>
       <div className='confirmation-content'>
-        <p>👻 Your phantom will vanish into the ethereal realm...</p>
-        <ul>
-          <li>All chat history will be permanently deleted</li>
-          <li>Website knowledge will be forgotten</li>
-          <li>
-            You'll need to create a new phantom to chat about this website again
-          </li>
-        </ul>
-        <p className='confirmation-warning'>This action cannot be undone!</p>
+        <div className='ethereal-message'>
+          <p>👻 Your phantom will vanish into the ethereal realm...</p>
+        </div>
+        <div className='consequences'>
+          <ul>
+            <li>
+              <span className='consequence-icon'>📜</span>
+              <span>All chat history will be permanently deleted</span>
+            </li>
+            <li>
+              <span className='consequence-icon'>🧠</span>
+              <span>Website knowledge will be forgotten</span>
+            </li>
+            <li>
+              <span className='consequence-icon'>🔄</span>
+              <span>
+                You'll need to create a new phantom to chat about this website
+                again
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div className='warning-box'>
+          <p className='confirmation-warning'>This action cannot be undone!</p>
+        </div>
       </div>
       <div className='confirmation-actions'>
         <button
@@ -83,7 +107,14 @@ const EditPhantomForm = ({ phantom, onClose, onSave, onDelete, onReCrawl }) => {
           onClick={handleDelete}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Vanishing...' : 'Yes, Delete Phantom'}
+          {isSubmitting ? (
+            <>
+              <span className='vanishing-text'>Vanishing</span>
+              <span className='dots'>...</span>
+            </>
+          ) : (
+            'Yes, Delete Phantom'
+          )}
         </button>
       </div>
     </div>

@@ -203,9 +203,7 @@
 }
 
 .confirmation-content p {
-  margin-bottom: 16px;
   font-size: 1rem;
-  line-height: 1.5;
 }
 
 .confirmation-content ul {
@@ -277,4 +275,206 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+.delete-confirmation-view {
+  background: linear-gradient(
+    180deg,
+    var(--color-secondary) 0%,
+    var(--color-background) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.delete-confirmation-view::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--color-error-rgb), 0.15) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.delete-header {
+  text-align: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.crying-phantom {
+  width: 70px;
+  height: 110px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  animation: floatPhantom 3s ease-in-out infinite;
+}
+
+.delete-header h2 {
+  color: var(--color-error);
+  font-size: 2rem;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ethereal-message {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--color-foreground);
+  margin: 24px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.consequences {
+  margin: 32px 0;
+}
+
+.consequences ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.consequences li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.consequences li:hover {
+  transform: translateX(5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.consequence-icon {
+  font-size: 1.5rem;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warning-box {
+  margin: 32px auto;
+  padding: 16px 24px;
+  background: rgba(var(--color-error-rgb), 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: 12px;
+  max-width: 300px;
+  text-align: center;
+}
+
+.confirmation-warning {
+  color: var(--color-error);
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  justify-content: center;
+}
+
+.confirmation-actions button {
+  flex: 1;
+  max-width: 200px;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cancel-delete-button {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  border: 1px solid var(--border-color) !important;
+}
+
+.cancel-delete-button:hover:not(:disabled) {
+  background-color: var(--hover-overlay);
+  transform: translateY(-2px);
+}
+
+.confirm-delete-button {
+  background-color: var(--color-error);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.confirm-delete-button:hover:not(:disabled) {
+  background-color: var(--color-error-dark, #ff3333);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--color-error-rgb), 0.3);
+}
+
+.confirmation-actions button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.vanishing-text {
+  display: inline-block;
+}
+
+.dots {
+  display: inline-block;
+  width: 24px;
+  animation: loadingDots 1.4s infinite;
+}
+
+@keyframes floatPhantom {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes loadingDots {
+  0%,
+  20% {
+    content: '.';
+  }
+  40%,
+  60% {
+    content: '..';
+  }
+  80%,
+  100% {
+    content: '...';
+  }
 }
