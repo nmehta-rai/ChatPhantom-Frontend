@@ -27,6 +27,7 @@ function Dashboard() {
   const [phantomStatuses, setPhantomStatuses] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialStatusReceived, setIsInitialStatusReceived] = useState(false);
+  const [phantomProgress, setPhantomProgress] = useState({});
   const websocketRefs = useRef({});
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingPhantom, setEditingPhantom] = useState(null);
@@ -52,20 +53,40 @@ function Dashboard() {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log('WebSocket message received:', data);
+
       setPhantomStatuses((prev) => ({
         ...prev,
         [phantomId]: data.status,
       }));
+
+      if (data.progress !== undefined) {
+        console.log(
+          'Progress update received:',
+          data.progress,
+          'for phantom:',
+          phantomId
+        );
+        setPhantomProgress((prev) => ({
+          ...prev,
+          [phantomId]: data.progress,
+        }));
+      }
+
       setIsInitialStatusReceived(true);
     };
 
+    ws.onopen = () => {
+      console.log('WebSocket connection opened for phantom:', phantomId);
+    };
+
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error('WebSocket error for phantom:', phantomId, error);
       setIsInitialStatusReceived(true); // Ensure we don't get stuck loading on error
     };
 
     ws.onclose = () => {
-      console.log('WebSocket connection closed');
+      console.log('WebSocket connection closed for phantom:', phantomId);
       delete websocketRefs.current[phantomId];
     };
 
@@ -326,6 +347,8 @@ function Dashboard() {
           ) : (
             <PreparingPhantomScreen
               phantomName={selectedPhantom.phantom_name}
+              progress={phantomProgress[selectedPhantom.phantom_id] || 0}
+              status={phantomStatuses[selectedPhantom.phantom_id]}
             />
           )}
         </>
