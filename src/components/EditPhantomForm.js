@@ -55,7 +55,7 @@ const EditPhantomForm = ({ phantom, onClose, onSave, onDelete, onReCrawl }) => {
   };
 
   const renderDeleteConfirmation = () => (
-    <div className='delete-confirmation'>
+    <div className='edit-phantom-form'>
       <h2>Delete {phantom.phantom_name}?</h2>
       <div className='confirmation-content'>
         <p>👻 Your phantom will vanish into the ethereal realm...</p>
@@ -90,7 +90,7 @@ const EditPhantomForm = ({ phantom, onClose, onSave, onDelete, onReCrawl }) => {
   );
 
   const renderEditForm = () => (
-    <>
+    <div className='edit-phantom-form'>
       <h2>Edit Phantom</h2>
       <div className='phantom-profile-container'>
         <div className='phantom-profile'>
@@ -110,15 +110,17 @@ const EditPhantomForm = ({ phantom, onClose, onSave, onDelete, onReCrawl }) => {
               <span>Phantom Name</span>
             </div>
           </label>
-          <input
-            type='text'
-            id='phantomName'
-            name='phantomName'
-            value={formData.phantomName}
-            onChange={handleInputChange}
-            placeholder='Enter phantom name'
-            disabled={isSubmitting}
-          />
+          <div className='input-wrapper'>
+            <input
+              type='text'
+              id='phantomName'
+              name='phantomName'
+              value={formData.phantomName}
+              onChange={handleInputChange}
+              placeholder='Enter phantom name'
+              disabled={isSubmitting}
+            />
+          </div>
         </div>
         <div className='form-group'>
           <label htmlFor='websiteUrl'>
@@ -127,55 +129,47 @@ const EditPhantomForm = ({ phantom, onClose, onSave, onDelete, onReCrawl }) => {
               <span>Website URL</span>
             </div>
           </label>
-          <input
-            type='url'
-            id='websiteUrl'
-            value={phantom.website_url}
-            disabled
-            className='disabled-input'
-          />
+          <div className='input-wrapper'>
+            <input
+              type='url'
+              id='websiteUrl'
+              value={phantom.website_url}
+              disabled
+              className='disabled-input'
+            />
+          </div>
         </div>
         <div className='form-actions'>
-          <div className='action-row'>
-            <button
-              type='submit'
-              className='save-button'
-              disabled={
-                isSubmitting || !formData.phantomName.trim() || !hasChanges
-              }
-            >
-              Save Changes
-            </button>
-            <button
-              type='button'
-              className='recrawl-button'
-              onClick={onReCrawl}
-            >
-              Re-Crawl
-            </button>
-          </div>
           <button
             type='button'
-            className='delete-button'
-            onClick={() => setShowDeleteConfirmation(true)}
+            className='cancel-button'
+            onClick={onClose}
+            disabled={isSubmitting}
           >
-            Delete Phantom
+            Cancel
+          </button>
+          <button
+            type='submit'
+            className='submit-button'
+            disabled={
+              isSubmitting || !formData.phantomName.trim() || !hasChanges
+            }
+          >
+            {isSubmitting ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
-      </form>
-    </>
-  );
-
-  return (
-    <div className='modal-overlay'>
-      <div className='edit-phantom-form'>
-        {showDeleteConfirmation ? renderDeleteConfirmation() : renderEditForm()}
-        <button className='close-button' onClick={onClose}>
-          ×
+        <button
+          type='button'
+          className='delete-button'
+          onClick={() => setShowDeleteConfirmation(true)}
+        >
+          Delete Phantom
         </button>
-      </div>
+      </form>
     </div>
   );
+
+  return showDeleteConfirmation ? renderDeleteConfirmation() : renderEditForm();
 };
 
 export default EditPhantomForm;

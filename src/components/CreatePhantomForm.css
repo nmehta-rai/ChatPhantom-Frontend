@@ -17,7 +17,7 @@
 
 .form-group {
   margin-bottom: 24px;
-  width: 90%;
+  width: 100%;
 }
 
 .label-content {
@@ -25,6 +25,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
+  width: 90%;
 }
 
 .field-icon {
@@ -45,7 +46,7 @@
 }
 
 .form-group input {
-  width: 100%;
+  width: 90%;
   padding: 14px 16px;
   border: 1px solid var(--border-color);
   border-radius: 8px;

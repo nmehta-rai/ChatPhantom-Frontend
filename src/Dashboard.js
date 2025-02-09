@@ -197,6 +197,7 @@ function Dashboard() {
     e.stopPropagation(); // Prevent phantom selection when clicking edit
     setEditingPhantom(phantom);
     setShowEditForm(true);
+    setSelectedPhantom(null); // Clear selected phantom when editing
   };
 
   const handleSavePhantom = async (updatedPhantom) => {
@@ -216,6 +217,9 @@ function Dashboard() {
               : p
           )
         );
+        setShowEditForm(false);
+        setEditingPhantom(null);
+        setSelectedPhantom(updatedPhantom); // Select the updated phantom
       }
     } catch (error) {
       console.error('Error updating phantom:', error);
@@ -232,9 +236,9 @@ function Dashboard() {
         setPhantoms(
           phantoms.filter((p) => p.phantom_id !== phantom.phantom_id)
         );
-        if (selectedPhantom?.phantom_id === phantom.phantom_id) {
-          setSelectedPhantom(null);
-        }
+        setShowEditForm(false);
+        setEditingPhantom(null);
+        setSelectedPhantom(null);
       }
     } catch (error) {
       console.error('Error deleting phantom:', error);
@@ -279,6 +283,22 @@ function Dashboard() {
         <CreatePhantomForm
           onSubmit={handleSubmitPhantom}
           onCancel={handleCancelCreate}
+        />
+      );
+    }
+
+    if (showEditForm && editingPhantom) {
+      return (
+        <EditPhantomForm
+          phantom={editingPhantom}
+          onClose={() => {
+            setShowEditForm(false);
+            setEditingPhantom(null);
+            setSelectedPhantom(editingPhantom); // Return to the phantom's chat
+          }}
+          onSave={handleSavePhantom}
+          onDelete={handleDeletePhantom}
+          onReCrawl={() => handleReCrawl(editingPhantom)}
         />
       );
     }
@@ -472,19 +492,6 @@ function Dashboard() {
           <div className='chat-container'>{renderMainContent()}</div>
         </div>
       </div>
-
-      {showEditForm && editingPhantom && (
-        <EditPhantomForm
-          phantom={editingPhantom}
-          onClose={() => {
-            setShowEditForm(false);
-            setEditingPhantom(null);
-          }}
-          onSave={handleSavePhantom}
-          onDelete={handleDeletePhantom}
-          onReCrawl={() => handleReCrawl(editingPhantom)}
-        />
-      )}
     </div>
   );
 }
