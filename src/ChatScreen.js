@@ -13,6 +13,14 @@ export const ChatScreen = ({ phantom }) => {
   const messagesContainerRef = useRef(null);
   const isNearBottomRef = useRef(true);
 
+  // Reset conversation when phantom changes
+  useEffect(() => {
+    setConversation([]);
+    setStreamingResponse('');
+    setInput('');
+    setUserHasScrolled(false);
+  }, [phantom.phantom_id]);
+
   // Log phantom ID when component loads or phantom changes
   useEffect(() => {
     console.log('ChatScreen loaded with phantom ID:', phantom.phantom_id);
