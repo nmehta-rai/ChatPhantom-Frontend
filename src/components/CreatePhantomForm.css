@@ -8,7 +8,7 @@
 }
 
 .create-phantom-form h2 {
-  margin: 0 0 32px 0;
+  margin: 0 0 28px 0;
   font-size: 1.75rem;
   color: var(--color-foreground);
   text-align: center;
@@ -17,6 +17,7 @@
 
 .form-group {
   margin-bottom: 24px;
+  width: 90%;
 }
 
 .label-content {
@@ -75,8 +76,10 @@
 
 .form-actions {
   display: flex;
-  gap: 12px;
+  gap: 15px;
   margin-top: 40px;
+  width: 100%;
+  align-items: center;
 }
 
 .form-actions button {
@@ -88,6 +91,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 60%;
 }
 
 .cancel-button {
@@ -287,4 +291,76 @@
   100% {
     transform: translateY(0px);
   }
+}
+
+.edit-phantom-pic {
+  background: none;
+  border: none;
+  padding: 6px 6px 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+}
+
+.edit-phantom-pic img {
+  width: 25px;
+  height: 25px;
+  opacity: 0.7;
+}
+
+.edit-phantom-pic:hover img {
+  opacity: 1;
+}
+
+.phantom-profile {
+  flex-direction: column;
+  width: 20%;
+  position: relative;
+  padding: 12px;
+}
+
+.phantom-profile-pic {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+  padding: 4px;
+  background-color: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phantom-profile-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin-bottom: 22px;
+}
+
+.phantom-profile-pic img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.change-profile-pic {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.change-profile-pic:hover {
+  background-color: var(--hover-overlay);
+  color: var(--color-highlight);
 }

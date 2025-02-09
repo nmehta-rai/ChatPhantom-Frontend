@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './CreatePhantomForm.css';
 import PhantomIcon from '../assets/PhantomIcon2.png';
 import InternetIcon from '../assets/Internet.png';
+import ChatPhantomLogo from '../assets/ChapPhantom Logo No Background.png';
+import EditIcon from '../assets/EditIcon.png';
 
 const ErrorModal = ({ message, onClose }) => {
   const isHelpMessage = message?.includes('https://');
@@ -132,6 +134,16 @@ const CreatePhantomForm = ({ onSubmit, onCancel }) => {
           onClose={() => setErrorMessage('')}
         />
       )}
+      <div className='phantom-profile-container'>
+        <div className='phantom-profile'>
+          <button className='edit-phantom-pic'>
+            <img className='edit-icon' src={EditIcon} alt='Edit' />
+          </button>
+          <div className='phantom-profile-pic'>
+            <img src={ChatPhantomLogo} alt='Phantom Profile' />
+          </div>
+        </div>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className='form-group'>
           <label htmlFor='phantomName'>
