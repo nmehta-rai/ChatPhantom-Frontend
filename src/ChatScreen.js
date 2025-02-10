@@ -10,27 +10,69 @@ export const ChatScreen = ({ phantom }) => {
   const [streamingResponse, setStreamingResponse] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [userHasScrolled, setUserHasScrolled] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [hasMoreHistory, setHasMoreHistory] = useState(true);
+  const [nextHistoryTimestamp, setNextHistoryTimestamp] = useState(null);
   const messagesContainerRef = useRef(null);
   const isNearBottomRef = useRef(true);
+  const isNearTopRef = useRef(false);
+  const scrollHeightBeforeLoadRef = useRef(0);
+  const API_BASE_URL = 'http://127.0.0.1:8000';
 
-  // Reset conversation when phantom changes
+  // Reset conversation and history state when phantom changes
   useEffect(() => {
     setConversation([]);
     setStreamingResponse('');
     setInput('');
     setUserHasScrolled(false);
+    setHasMoreHistory(true);
+    setNextHistoryTimestamp(null);
+    loadChatHistory();
   }, [phantom.phantom_id]);
+
+  // Load initial chat history
+  const loadChatHistory = async (beforeTimestamp) => {
+    if (isLoadingHistory || (!hasMoreHistory && beforeTimestamp)) return;
+
+    setIsLoadingHistory(true);
+    try {
+      const params = new URLSearchParams();
+      if (beforeTimestamp) params.append('before_timestamp', beforeTimestamp);
+      params.append('limit', '50');
+
+      const response = await fetch(
+        `${API_BASE_URL}/chat/${phantom.phantom_id}/history?${params}`
+      );
+      const data = await response.json();
+
+      if (beforeTimestamp) {
+        // Prepend historical messages
+        setConversation((prev) => [...data.messages, ...prev]);
+      } else {
+        // Initial load
+        setConversation(data.messages);
+      }
+
+      setHasMoreHistory(data.has_more);
+      setNextHistoryTimestamp(data.next_timestamp);
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
 
   // Log phantom ID when component loads or phantom changes
   useEffect(() => {
     console.log('ChatScreen loaded with phantom ID:', phantom.phantom_id);
   }, [phantom]);
 
-  // Add scroll handler
+  // Add scroll handler with infinite scroll
   useEffect(() => {
     const handleScroll = (e) => {
       const { scrollTop, scrollHeight, clientHeight } = e.target;
       const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
+      const isNearTop = scrollTop < 200;
       setShowScrollButton(!isNearBottom);
 
       // Only set userHasScrolled if we're currently streaming and user scrolls up
@@ -39,6 +81,13 @@ export const ChatScreen = ({ phantom }) => {
       }
 
       isNearBottomRef.current = isNearBottom;
+      isNearTopRef.current = isNearTop;
+
+      // Load more history when near top
+      if (isNearTop && hasMoreHistory && !isLoadingHistory) {
+        scrollHeightBeforeLoadRef.current = scrollHeight;
+        loadChatHistory(nextHistoryTimestamp);
+      }
     };
 
     const container = messagesContainerRef.current;
@@ -52,7 +101,25 @@ export const ChatScreen = ({ phantom }) => {
         container.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [streamingResponse]);
+  }, [
+    streamingResponse,
+    hasMoreHistory,
+    isLoadingHistory,
+    nextHistoryTimestamp,
+  ]);
+
+  // Maintain scroll position when loading more history
+  useEffect(() => {
+    if (isLoadingHistory) return;
+
+    const container = messagesContainerRef.current;
+    if (container && scrollHeightBeforeLoadRef.current > 0) {
+      const newScrollHeight = container.scrollHeight;
+      const scrollDiff = newScrollHeight - scrollHeightBeforeLoadRef.current;
+      container.scrollTop = scrollDiff;
+      scrollHeightBeforeLoadRef.current = 0;
+    }
+  }, [conversation, isLoadingHistory]);
 
   const scrollToBottom = (force = false) => {
     const container = messagesContainerRef.current;
@@ -95,7 +162,7 @@ export const ChatScreen = ({ phantom }) => {
     scrollToBottom(true);
 
     // Initiate a POST to the /chat endpoint
-    const response = await fetch('http://127.0.0.1:8000/chat', {
+    const response = await fetch(`${API_BASE_URL}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -166,6 +233,12 @@ export const ChatScreen = ({ phantom }) => {
         </span>
       </div>
       <div className='messages-container' ref={messagesContainerRef}>
+        {isLoadingHistory && hasMoreHistory && (
+          <div className='loading-history'>
+            <div className='loading-spinner'></div>
+            <span>Loading previous messages...</span>
+          </div>
+        )}
         {conversation.map((msg, idx) => (
           <div
             key={idx}
